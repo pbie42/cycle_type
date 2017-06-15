@@ -14,11 +14,11 @@ export function intent({ DOM, HTTP, newPets, editPets }:ListSources):ListIntent 
   )(HTTP)
 
   const loadedPets:Stream<State> = queries.responses.getPets.map(pets => Stream.of(...pets)).flatten()
+  const petsEditSuccess:Stream<State> = queries.responses.editPets.map(pets => Stream.of(...pets)).flatten()
   const petsSaveSuccess:Stream<Array<State>> = queries.responses.savePets
-  const petsEditSuccess:Stream<Array<State>> = queries.responses.editPets
 
   const actions:Stream<Function> = queries.actions
-  const addPets:Stream<State | {}> = Stream.merge(sample(newPets, petsSaveSuccess), loadedPets)
+  const addPets:Stream<State | {}> = Stream.merge(sample(newPets, petsSaveSuccess), loadedPets, petsEditSuccess)
 
-  return { actions, requests: queries.requests, addPets, petsEditSuccess }
+  return { actions, requests: queries.requests, addPets }
 }

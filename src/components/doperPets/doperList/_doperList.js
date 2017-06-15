@@ -13,7 +13,7 @@ export default function List({ DOM, HTTP, onion }, newPets, editPets) {
 
   const state = onion.state$
 
-  const { actions, requests, addPets, petsEditSuccess } = intent({ DOM, HTTP }, newPets, editPets)
+  const { actions, requests, addPets } = intent({ DOM, HTTP }, newPets, editPets)
   const { states } = model(actions)
 
   const listPets = Collection(petsItem, { DOM }, addPets.map(pets => ({ pets: xs.of(pets) })), item => item.remove, editPets)

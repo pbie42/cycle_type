@@ -86,7 +86,6 @@ export interface ListIntent {
   actions:Stream<Function>
   requests: Stream<Query>
   addPets:Stream<State | {}>
-  petsEditSuccess:Stream<Array<State>>
 }
 
 export interface ItemSources {

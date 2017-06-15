@@ -4,7 +4,7 @@ import { Status } from "../../repo"
 import { State } from '../interfaces';
 
 
-export const view = ([petslist, state, edit]:[Array<VNode>, { requests }, State | String]) => {
+export const view = ([petslist, state]:[Array<VNode>, { requests }]) => {
   return div([
     h1('Users'),
     ...showPets(petslist, state.requests.getPets),
