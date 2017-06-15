@@ -5,7 +5,7 @@ import { log, sample, bind } from '../../../utils'
 
 import { Repo } from "../../repo"
 
-export function intent({ DOM, HTTP, newPets, editPets }) {
+export function intent({ DOM, HTTP }, newPets, editPets) {
 
   const queries = Repo.setup(
     Repo.get("/getPets", "getPets").now(),

@@ -23,10 +23,18 @@ export const sample = (source, trigger) => {
   })
 }
 
-export function mergeState(obj1:Object, obj2:Object):Object {
-    const obj3:Object = {}
+// export function mergeState(obj1:Object, obj2:Object):Object {
+//     const obj3:Object = {}
+//     for (let attrname in obj2) { obj3[attrname] = obj2[attrname] }
+//     for (let attrname in obj1) { obj3[attrname] = obj1[attrname] }
+//     return obj3
+// }
+
+export function mergeState(obj1, obj2) {
+    const obj3 = { pets: {} }
     for (let attrname in obj2) { obj3[attrname] = obj2[attrname] }
-    for (let attrname in obj1) { obj3[attrname] = obj1[attrname] }
+    for (let attrname in obj2.pets) { obj3.pets[attrname] = obj2.pets[attrname] }
+    for (let attrname in obj1.pets) { obj3.pets[attrname] = obj1.pets[attrname] }
     return obj3
 }
 

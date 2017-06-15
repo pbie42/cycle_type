@@ -6,18 +6,17 @@ import { log, bind } from '../../../utils'
 
 export default function intent(sources) {
 
-  const nameT = sources.DOM.select('#name').events('input')
-                             .map(ev => ({ name: ev.target.value }) )
-  const typeT = sources.DOM.select('#type').events('input')
-                             .map(ev => ({ type: ev.target.value }))
-  const colorT = sources.DOM.select('#color').events('input')
-                             .map(ev => ({ color: ev.target.value }))
-  const submitter = sources.DOM.select('#submit').events('click')
-                             .mapTo(null)
-  const editor = sources.DOM.select('#editSubmit').events('click')
-                             .mapTo(null)
+  const name = sources.DOM.select('#name').events('input')
+                             .map(ev => ({ pets: { name: ev.target.value } }) )
+  const type = sources.DOM.select('#type').events('input')
+                             .map(ev => ({ pets: { type: ev.target.value } }))
+  const color = sources.DOM.select('#color').events('input')
+                             .map(ev => ({ pets: { color: ev.target.value } }))
 
-  const actions = xs.merge(nameT, typeT, colorT)
+  const submitter = sources.DOM.select('#submit').events('click').mapTo(null)
+  const editor = sources.DOM.select('#editSubmit').events('click').mapTo(null)
+
+  const actions = xs.merge(name, type, color)
 
   return { actions, submitter, editor }
 }

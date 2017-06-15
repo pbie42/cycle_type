@@ -8,6 +8,7 @@ export default function petsItem({ DOM, pets, _idx}) {
   const edit = DOM.select('.edit').events('click')
 
   const edits = xs.combine(pets, _idx, edit).map(function([ data, idx, _ ]) {
+      console.log(`edits clicked`, { name: data.name, type: data.type, color: data.color, id: idx })
       return { name: data.name, type: data.type, color: data.color, id: idx }
     })
 
