@@ -12,9 +12,7 @@ export default function app(sources) {
   const editsProxy = xs.create().startWith('')
 
   const initReducer = xs.of(function initReducer(prevState) {
-    return { pets: { name: '', type: '', color: '' },
-             newPets: { name: '', type: '', color: '' },
-             editPets: { name: '', type: '', color: '' } } // this is the initial state
+    return { pets: { name: '', type: '', color: '' } } // this is the initial state
   })
 
   const formListLens = {
