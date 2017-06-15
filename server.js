@@ -33,10 +33,10 @@ const people = [
 ]
 
 const pets = [
-  { name: "Paul", type: "pb@pb.com", color: "Paris" },
-  { name: "Alex", type: "ak@pb.com", color: "Paris" },
-  { name: "Maria", type: "mn@pb.com", color: "Paris" },
-  { name: "Jonathan", type: "jb@pb.com", color: "Paris" }
+  { name: "Paul", type: "pb@pb.com", color: "Paris", id: 0 },
+  { name: "Alex", type: "ak@pb.com", color: "Paris", id: 1 },
+  { name: "Maria", type: "mn@pb.com", color: "Paris", id: 2 },
+  { name: "Jonathan", type: "jb@pb.com", color: "Paris", id: 3 }
 ]
 
 const phones = [
@@ -115,8 +115,13 @@ app.post('/savePets', (req, res) => {
 
 app.post('/editPets', (req, res) => {
   console.log(`body`, req.body)
+  const newPets = pets.map(pet => {
+    if (pet.id === req.body.pets.id) { pet = req.body.pets }
+    return pet
+  })
+  console.log(`newPets`, newPets)
   setTimeout(() => {
-    res.json(pets)
+    res.json(newPets)
   }, 500)
 })
 

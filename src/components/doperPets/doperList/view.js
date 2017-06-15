@@ -2,7 +2,7 @@ import { div, h1, h4 } from '@cycle/dom'
 
 import { Status } from "../../repo"
 
-export const view = ([petslist, state, edit]) => {
+export const view = ([petslist, state]) => {
   return div([
     h1('Pets'),
     ...showPets(petslist, state.requests.getPets),

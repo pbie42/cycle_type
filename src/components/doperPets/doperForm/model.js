@@ -6,10 +6,6 @@ import { log, sample, assign, bind, mergeState } from '../../../utils'
 
 export default function model(actions, submitter, editor, edits) {
 
-  actions.addListener({
-    next: i => console.log(`actions`, i)
-  })
-
   const updater = actions.map(action => bind(mergeState, action))
   const editorReducer = edits.map(data => bind(editReducer, data))
   const clearerReducer = xs.merge(submitter, editor).map(data => function clearReducer(prevState) {

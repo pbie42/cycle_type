@@ -14,11 +14,11 @@ export function intent({ DOM, HTTP }, newPets, editPets) {
   )(HTTP)
 
   const loadedPets = queries.responses.getPets.map(pets => xs.of(...pets)).flatten()
+  const petsEditSuccess = queries.responses.editPets.map(pets => xs.of(...pets)).flatten()
   const petsSaveSuccess = queries.responses.savePets
-  const petsEditSuccess = queries.responses.editPets
 
   const actions = queries.actions
-  const addPets = xs.merge(sample(newPets, petsSaveSuccess), loadedPets)
+  const addPets = xs.merge(sample(newPets, petsSaveSuccess), loadedPets, petsEditSuccess)
 
   return { actions, requests: queries.requests, addPets, petsEditSuccess }
 }
