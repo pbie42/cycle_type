@@ -9,11 +9,11 @@ import { model } from "./model"
 import { intent } from "./intent"
 import { view } from "./view"
 
-import { Sources, ListSinks, ListState, ListIntent, NewState, ItemSinks, Data } from '../interfaces'
+import { Sources, ListSinks, ListState, ListIntent, State, ItemSinks, Data } from '../interfaces'
 
-export default function List({ DOM, HTTP, onion }:Sources, newPets:Stream<NewState>, editPets:Stream<NewState>):ListSinks {
+export default function List({ DOM, HTTP, onion }:Sources, newPets:Stream<State>, editPets:Stream<State>):ListSinks {
 
-  const state:Stream<NewState> = onion.state$
+  const state:Stream<State> = onion.state$
 
   const { actions, requests, addPets }:ListIntent = intent({ DOM, HTTP, onion }, newPets, editPets)
   const { states }:{ states:Stream<ListState>} = model(actions)

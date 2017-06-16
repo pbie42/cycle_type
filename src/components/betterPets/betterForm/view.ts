@@ -2,9 +2,9 @@ import { Stream } from 'xstream'
 import { div, label, button, form, VNode } from '@cycle/dom'
 
 import { textInput } from '../../views'
-import { NewState } from '../interfaces'
+import { State } from '../interfaces'
 
-const view = ([ state, edit]:[ NewState, Boolean ]):VNode => {
+const view = ([ state, edit]:[ State, Boolean ]):VNode => {
   const { name, type, color,  } = state.pets
   console.log({ name, type, color,  })
     return form({attrs: { onsubmit: "return false" }}, [

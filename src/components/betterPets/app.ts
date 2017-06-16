@@ -7,13 +7,13 @@ import { assign } from '../../utils'
 import betterForm from './betterForm/_betterForm'
 import betterList from './betterList/_betterList'
 
-import { Sources, Sinks, FormSinks, ListSinks, Reducer, NewState } from './interfaces'
+import { Sources, Sinks, FormSinks, ListSinks, Reducer, State } from './interfaces'
 
 export default function app({DOM, HTTP, onion }:Sources):Sinks {
 
   const editsProxy:Stream<{}> = Stream.create().startWith('')
 
-  const initReducer:Stream<Reducer> = Stream.of(function initReducer(prevState):NewState {
+  const initReducer:Stream<Reducer> = Stream.of(function initReducer(prevState):State {
     return { pets: { name: '', type: '', color: '' } } // this is the initial state
   })
 

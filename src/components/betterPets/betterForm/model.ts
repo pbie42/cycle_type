@@ -2,14 +2,14 @@ import { Stream } from 'xstream'
 import delay from 'xstream/extra/delay'
 
 import { bind, mergeState } from '../../../utils'
-import { Reducer, NewState, FormModel, StatePiece } from '../interfaces'
+import { Reducer, State, FormModel, StatePiece } from '../interfaces'
 
 
 export default function model(actions:Stream<StatePiece>, submitter:Stream<Reducer>, editor:Stream<Reducer>, edits:Stream<{}>):FormModel {
 
   const updater:Stream<Reducer> = actions.map(action => bind(mergeState, action))
   const editorReducer:Stream<Reducer> = edits.map(data => bind(editReducer, data))
-  const clearerReducer:Stream<Reducer> = Stream.merge(submitter, editor).map(data => function clearReducer(prevState):NewState {
+  const clearerReducer:Stream<Reducer> = Stream.merge(submitter, editor).map(data => function clearReducer(prevState):State {
     return { pets: { name: '', type: '', color: '' }}
   }).compose(delay(60))
 
@@ -19,4 +19,4 @@ export default function model(actions:Stream<StatePiece>, submitter:Stream<Reduc
   return { updater, reducer, edit }
 }
 
-export function editReducer(data:NewState, prevState:NewState):NewState { return data }
+export function editReducer(data:State, prevState:State):State { return data }

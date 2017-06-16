@@ -1,7 +1,7 @@
 import { Stream } from "xstream"
 import { div, p, button } from '@cycle/dom'
 
-import { State, ItemSources, ItemSinks, Data } from '../../interfaces'
+import { StatePeel, ItemSources, ItemSinks, Data } from '../../interfaces'
 
 export default function petsItem({ DOM, pets, _idx}:ItemSources ):ItemSinks {
 
@@ -13,7 +13,7 @@ export default function petsItem({ DOM, pets, _idx}:ItemSources ):ItemSinks {
       return { name: data.name, type: data.type, color: data.color, id: idx }
     })
 
-  const itemState:Stream<[State, Number]> = Stream.combine(pets, _idx)
+  const itemState:Stream<[StatePeel, Number]> = Stream.combine(pets, _idx)
 
   return {
     DOM: itemState.map(([{ name, type, color,  }, _idx]) =>
