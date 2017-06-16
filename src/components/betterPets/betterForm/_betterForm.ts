@@ -4,26 +4,24 @@ import model from "./model"
 import view from "./view"
 import intent from "./intent"
 
-import { log } from "../../../utils"
-import { FormSinks, State, FormStates, FormIntent, Sources } from '../interfaces'
+import { sample } from "../../../utils"
+import { FormSinks, FormIntent, FormModel, Sources, NewState } from '../interfaces'
 
-export default function betterForm({ DOM, HTTP }:Sources, edits:Stream<{}>):FormSinks {
+export default function betterForm({ DOM, HTTP, onion }:Sources, edits:Stream<{}>):FormSinks {
 
-  const resets: Stream<{}> = Stream.create()
+  const state:Stream<NewState> = onion.state$
 
-  const { actions }:FormIntent = intent({ DOM, HTTP }, resets, edits)
-  const { states, newPets, editPets }:FormStates = model(actions)
+  const { actions, submitter, editor }:FormIntent = intent({ DOM, HTTP, onion })
+  const { updater, reducer, edit }:FormModel = model(actions, submitter, editor, edits)
 
-  const newReset:Stream<State> = Stream.merge(newPets, editPets)
-  const edit:Stream<Boolean> = Stream.merge(Stream.empty().startWith(true),
-                        edits.mapTo(false), editPets.mapTo(true))
-
-  resets.imitate(newReset)
+  const newPets:Stream<NewState> = sample(state, submitter)
+  const editPets:Stream<NewState> = sample(state, editor)
 
   return {
-    DOM: Stream.combine(states, edit).map(view),
+    DOM: Stream.combine(state, edit).map(view),
     HTTP: Stream.empty(),
     history: Stream.empty(),
+    onion: reducer,
     newPets,
     editPets
   }

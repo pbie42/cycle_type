@@ -1,34 +1,22 @@
 import { Stream } from 'xstream'
-import { log, sample, assign } from '../../../utils'
+import delay from 'xstream/extra/delay'
 
-import { State, FormStates, Data } from '../interfaces'
+import { bind, mergeState } from '../../../utils'
+import { Reducer, NewState, FormModel, StatePiece } from '../interfaces'
 
-export default function model(actions:Stream<Function | { name?:string }>):FormStates {
-  const states:Stream<State> = actions.fold((state:State, action:Function):State => action(state), init())
 
-  const submit:Stream<Function | {}> = actions.filter(action => action.name === 'submitFn')
-  const newPets:Stream<State> = sample(states, submit)
+export default function model(actions:Stream<StatePiece>, submitter:Stream<Reducer>, editor:Stream<Reducer>, edits:Stream<{}>):FormModel {
 
-  const editSubmit:Stream<Function | {}> = actions.filter(action => action.name === 'editFn')
-  const editPets:Stream<State> = sample(states, editSubmit)
+  const updater:Stream<Reducer> = actions.map(action => bind(mergeState, action))
+  const editorReducer:Stream<Reducer> = edits.map(data => bind(editReducer, data))
+  const clearerReducer:Stream<Reducer> = Stream.merge(submitter, editor).map(data => function clearReducer(prevState):NewState {
+    return { pets: { name: '', type: '', color: '' }}
+  }).compose(delay(60))
 
-  return { states, newPets, editPets }
+  const edit:Stream<Boolean> = Stream.merge(Stream.empty().startWith(true), edits.mapTo(false), editor.mapTo(true))
+  const reducer:Stream<Reducer> = Stream.merge(updater, clearerReducer)
+
+  return { updater, reducer, edit }
 }
 
-export const init = ():State => ({ name: '', type: '', color: '',  })
-
-export const clear = ():State => init()
-
-export const edit = (data:Data, state:State):State =>
-      assign(state, { name: data.name, type: data.type, color: data.color, id: data.id })
-
-export const submitFn = (state:State):State => state
-
-export const editFn = (state:State):State => state
-
-export const nameChange = (name:string, state:State):State => assign(state, { name })
-
-export const typeChange = (type:string, state:State):State => assign(state, { type })
-
-export const colorChange = (color:string, state:State):State => assign(state, { color })
-
+export function editReducer(data:NewState, prevState:NewState):NewState { return data }

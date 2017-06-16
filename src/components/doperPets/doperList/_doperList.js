@@ -1,11 +1,10 @@
 import xs from 'xstream'
-import sampleCombine from 'xstream/extra/sampleCombine'
 import Collection from "../../collections"
 
-import { log, sample, bind, mergeState } from '../../../utils'
+import { bind, mergeState } from '../../../utils'
 import petsItem from './item/_item'
 
-import { model, Status } from "./model"
+import { model } from "./model"
 import { intent } from "./intent"
 import { view } from "./view"
 

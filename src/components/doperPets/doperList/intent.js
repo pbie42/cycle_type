@@ -1,7 +1,6 @@
 import xs from 'xstream'
 import delay from 'xstream/extra/delay'
-
-import { log, sample, bind } from '../../../utils'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
 import { Repo } from "../../repo"
 
@@ -18,7 +17,13 @@ export function intent({ DOM, HTTP }, newPets, editPets) {
   const petsSaveSuccess = queries.responses.savePets
 
   const actions = queries.actions
-  const addPets = xs.merge(sample(newPets, petsSaveSuccess), loadedPets, petsEditSuccess)
+  const addPets = xs.merge(sampleOnion(newPets, petsSaveSuccess), loadedPets, petsEditSuccess)
 
   return { actions, requests: queries.requests, addPets, petsEditSuccess }
+}
+
+export const sampleOnion = (source, trigger) => {
+  return trigger.compose(sampleCombine(source)).map(([_, value]) => {
+    return Object.assign({}, value.pets)
+  })
 }

@@ -10,7 +10,7 @@ import { makeHTTPDriver } from '@cycle/http'
 import { Hello, Counter, Bmi, Slider, Grow, Paginate, coolForm, app, pet, phone2, dope, doper, cooler, coolerForm, coolest, petApp, doperPets, example } from "./pages/home"
 
 function main(sources) {
-	return doperPets(sources)
+	return petApp(sources)
 }
 
 const wrappedMain = onionify(main)

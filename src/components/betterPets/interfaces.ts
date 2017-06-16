@@ -1,6 +1,27 @@
 import { Stream } from 'xstream'
-import { HTTPSource } from '@cycle/http';
-import { DOMSource, VNode } from '@cycle/dom';
+import { StateSource } from 'cycle-onionify'
+import { HTTPSource } from '@cycle/http'
+import { DOMSource, VNode } from '@cycle/dom'
+
+export interface NewState {
+    pets: {
+      name:string
+      type:string
+      color:string
+      id?:number
+    }
+  }
+
+export interface StatePiece { pets: { [x:string]:string } }
+
+
+export type Reducer = (prev?: NewState) => NewState | undefined
+
+export interface Sources {
+  DOM: DOMSource
+  onion: StateSource<NewState>
+  HTTP:HTTPSource
+}
 
 export interface Query {
   method:string
@@ -18,15 +39,16 @@ export interface Queries {
   requests: Stream<Query>
 }
 
-export interface Sources {
-  DOM:DOMSource
-  HTTP:HTTPSource
-}
+// export interface Sources {
+//   DOM:DOMSource
+//   HTTP:HTTPSource
+// }
 
 export interface Sinks {
   DOM: Stream<VNode>
   HTTP: Stream<Query>
   history: Stream<String>
+  onion: Stream<{} | Reducer>
 }
 
 export interface State {
@@ -50,34 +72,35 @@ export interface Data {
   id:number
 }
 
-export interface FormStates {
-  states:Stream<State>,
-  newPets:Stream<State>,
-  editPets:Stream<State>
-}
+//------------------FORM--------------------------------------------------------
 
 export interface FormSinks {
-  DOM:Stream<VNode>,
-  HTTP:Stream<Query>,
-  history:Stream<String>,
-  newPets:Stream<State>,
-  editPets:Stream<State>
+  DOM:Stream<VNode>
+  HTTP:Stream<Query>
+  history:Stream<String>
+  onion:Stream<Reducer>
+  newPets:Stream<NewState>
+  editPets:Stream<NewState>
+}
+
+export interface FormModel {
+  updater:Stream<Reducer>
+  reducer:Stream<Reducer>
+  edit:Stream<Boolean>
 }
 
 export interface FormIntent {
-   actions:Stream<Function | {}>
+   actions:Stream<StatePiece>
+   submitter:Stream<null>
+   editor:Stream<null>
 }
 
-export interface ListSources {
-  DOM:DOMSource,
-  HTTP:HTTPSource,
-  newPets:Stream<State>,
-  editPets:Stream<State>
-}
+//------------------LIST--------------------------------------------------------
 
 export interface ListSinks {
   DOM: Stream<VNode>
   HTTP: Stream<Query>
+  onion: Stream<Reducer>
   history:Stream<String>
   edits:Stream<Data[]>
 }
@@ -87,6 +110,8 @@ export interface ListIntent {
   requests: Stream<Query>
   addPets:Stream<State | {}>
 }
+
+//------------------ITEM--------------------------------------------------------
 
 export interface ItemSources {
   DOM:DOMSource

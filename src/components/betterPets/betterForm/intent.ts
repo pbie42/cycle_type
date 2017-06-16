@@ -1,33 +1,23 @@
 import { Stream } from 'xstream'
 
-import { nameChange, typeChange, colorChange, submitFn, clear, edit, editFn } from './model'
-
 import { log, bind } from '../../../utils'
-import { FormIntent, Sources } from '../interfaces';
+import { FormIntent, Sources, StatePiece } from '../interfaces';
 
-export default function intent({ DOM, HTTP }:Sources, reset:Stream<{}>, edits:Stream<{}>):FormIntent {
+export default function intent({ DOM, HTTP }:Sources):FormIntent {
 
-  
   const nameEv:Stream<Event> = DOM.select('#name').events('input')
   const typeEv:Stream<Event> = DOM.select('#type').events('input')
   const colorEv:Stream<Event> = DOM.select('#color').events('input')
   const submitEv:Stream<Event> = DOM.select('#submit').events('click')
   const editEv:Stream<Event> = DOM.select('#editSubmit').events('click')
 
-  
-  
-  const name:Stream<Function> = nameEv.map(ev => (ev.target as HTMLInputElement).value)
-                             .map(name => bind(nameChange, name))
-  const type:Stream<Function> = typeEv.map(ev => (ev.target as HTMLInputElement).value)
-                             .map(type => bind(typeChange, type))
-  const color:Stream<Function> = colorEv.map(ev => (ev.target as HTMLInputElement).value)
-                             .map(color => bind(colorChange, color))
+  const name:Stream<StatePiece> = nameEv.map(ev => ({ pets: { name: (ev.target as HTMLInputElement).value } }))
+  const type:Stream<StatePiece> = typeEv.map(ev => ({ pets: { type: (ev.target as HTMLInputElement).value } }))
+  const color:Stream<StatePiece> = colorEv.map(ev => ({ pets: { color: (ev.target as HTMLInputElement).value } }))
+  const submitter:Stream<null> = submitEv.mapTo(null)
+  const editor:Stream<null> = editEv.mapTo(null)
 
-  const submit:Stream<Function> = submitEv.mapTo(submitFn)
+  const actions:Stream<StatePiece> = Stream.merge(name, type, color)
 
-  const editSubmit:Stream<Function> = editEv.mapTo(editFn)
-
-  const actions:Stream<Function | {}> = Stream.merge(name, type, color, submit, reset.mapTo(clear), edits.map(data => bind(edit, data)), editSubmit)
-
-  return { actions }
+  return { actions, submitter, editor }
 }

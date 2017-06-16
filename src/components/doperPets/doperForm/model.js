@@ -1,7 +1,7 @@
 import xs from 'xstream'
 import delay from 'xstream/extra/delay'
 
-import { log, sample, assign, bind, mergeState } from '../../../utils'
+import { bind, mergeState } from '../../../utils'
 
 
 export default function model(actions, submitter, editor, edits) {
@@ -13,15 +13,9 @@ export default function model(actions, submitter, editor, edits) {
   }).compose(delay(60))
 
   const edit = xs.merge(xs.empty().startWith(true), edits.mapTo(false), editor.mapTo(true))
-  const reducer = xs.merge(updater, clearerReducer).map(log)
+  const reducer = xs.merge(updater, clearerReducer)
 
   return { updater, reducer, edit }
 }
 
 export function editReducer(data, prevState) { return data }
-
-function updateReducer(actions, prevState) {
-  if (actions.name) return { pets: { name: actions.name, type: prevState.pets.type, color: prevState.pets.color } }
-  if (actions.type) return { pets: { name: prevState.pets.name, type: actions.type, color: prevState.pets.color } }
-  if (actions.color) return { pets: { name: prevState.pets.name, type: prevState.pets.type, color: actions.color } }
-}

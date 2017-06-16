@@ -1,21 +1,21 @@
 import { Stream } from 'xstream'
-import { HTTPSource } from '@cycle/http'
-import { DOMSource, VNode } from '@cycle/dom'
-import sampleCombine from 'xstream/extra/sampleCombine'
+import { VNode } from '@cycle/dom'
 import Collection from "../../collections"
 
-import { log, sample, bind } from '../../../utils'
+import { log, sample, bind, mergeState } from '../../../utils'
 import petsItem from './item/_item'
 
 import { model } from "./model"
 import { intent } from "./intent"
 import { view } from "./view"
 
-import { ListSources, ListSinks, ListState, ListIntent, State, ItemSinks, Data } from '../interfaces'
+import { Sources, ListSinks, ListState, ListIntent, NewState, ItemSinks, Data } from '../interfaces'
 
-export default function List({ DOM, HTTP, newPets, editPets }:ListSources):ListSinks {
+export default function List({ DOM, HTTP, onion }:Sources, newPets:Stream<NewState>, editPets:Stream<NewState>):ListSinks {
 
-  const { actions, requests, addPets }:ListIntent = intent({ DOM, HTTP, newPets, editPets })
+  const state:Stream<NewState> = onion.state$
+
+  const { actions, requests, addPets }:ListIntent = intent({ DOM, HTTP, onion }, newPets, editPets)
   const { states }:{ states:Stream<ListState>} = model(actions)
 
   const listPets:Stream<Array<ItemSinks>> = Collection(petsItem, { DOM }, addPets.map(pets => ({ pets: Stream.of(pets) })), item => item.remove, editPets)
@@ -25,6 +25,7 @@ export default function List({ DOM, HTTP, newPets, editPets }:ListSources):ListS
   return {
     DOM: Stream.combine(listPetsVtrees, states).map(view),
     HTTP: requests,
+    onion: edits.map(data => bind(mergeState, { pets: data })),
     history: Stream.empty(),
     edits
   }
